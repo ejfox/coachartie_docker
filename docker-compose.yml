@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  capabilities:
+    build:
+      context: ./coachartie_capabilities
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    restart: unless-stopped
+    environment:
+      - NPM_CONFIG_PREFIX=/app/.npm-global
+      - PATH=/app/.npm-global/bin:$PATH
+      - ADDITIONAL_PACKAGES=@types/express @types/xml2js @types/node vitest
+    volumes:
+      - ./.env:/app/config/.env:ro  # Mount the root .env file as read-only
+    ports:
+      - "9991:9991"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9991/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  discord:
+    build:
+      context: ./coachartie_discord
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    restart: unless-stopped
+    volumes:
+      - ./.env:/app/.env:ro  # Mount the root .env file as read-only
+    depends_on:
+      capabilities:
+        condition: service_healthy
+    environment:
+      - CAPABILITIES_URL=http://capabilities:9991  # Internal Docker network URL
