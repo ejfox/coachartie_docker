@@ -4,3 +4,6 @@
 [submodule "coachartie_discord"]
 	path = coachartie_discord
 	url = https://github.com/ejfox/coachartie_discord2.git
+[submodule "coachartie_sms"]
+	path = coachartie_sms
+	url = https://github.com/ejfox/coachartie_sms
