@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("SUPABASE_URL")
+}
+
+/// Queue table for managing background tasks and jobs
+/// Used by the queue processor to handle asynchronous capability execution
+model Queue {
+  id           String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  status       String    // pending, processing, completed, failed, skipped
+  task_type    String    // capability name or task type identifier  
+  payload      Json?     // task parameters and data
+  created_at   DateTime  @default(now()) @map("created_at")
+  completed_at DateTime? @map("completed_at")
+  responded    Boolean   @default(false)
+  error_message String? @map("error_message")
+
+  @@map("queue")
+}
+
+/// Chat messages table for storing conversation history
+/// Used by both Discord bot and capabilities service for memory/context
+model Message {
+  id                Int       @id @default(autoincrement())
+  value             String    // message content
+  user_id           String    @map("user_id")
+  channel_id        String    @map("channel_id") 
+  guild_id          String    @map("guild_id")
+  created_at        DateTime  @default(now()) @map("created_at")
+  response_id       Int?      @map("response_id") // links to response message
+  embedding         Float[]?  // vector embedding for similarity search
+  had_capabilities  Boolean?  @map("had_capabilities") // whether response used capabilities
+  message_type      String?   @map("message_type") // user, system, capability_error, etc
+
+  // Self-referential relationship for request/response pairs
+  response_to Message? @relation("MessageResponse", fields: [response_id], references: [id])
+  responses   Message[] @relation("MessageResponse")
+
+  @@map("messages")
+}
+
+/// Memory table for storing AI-generated insights and context
+/// Used by enhanced memory service for conversation context
+model Memory {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id    String    @map("user_id")
+  guild_id   String?   @map("guild_id")
+  context    String?   // conversation context
+  insight    String?   // AI-generated insight
+  created_at DateTime  @default(now()) @map("created_at")
+  expires_at DateTime? @map("expires_at")
+
+  @@map("memory")
+}
+
+/// Configuration table for storing capability settings and rate limits
+/// Used by task manifest and capability management
+model Config {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  key        String   @unique // configuration key
+  value      Json     // configuration value (can be object, string, number, etc)
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  @@map("config")
+}
+
+/// Capability statistics table for tracking usage and performance
+/// Used by capabilities API for monitoring and analytics
+model CapabilityStats {
+  id            String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  capability    String   // capability name
+  usage_count   Int      @default(0) @map("usage_count")
+  avg_latency   Float?   @map("avg_latency") // average response time in ms
+  error_rate    Float?   @map("error_rate") // percentage of failed requests
+  last_used     DateTime? @map("last_used")
+  created_at    DateTime @default(now()) @map("created_at")
+  updated_at    DateTime @updatedAt @map("updated_at")
+
+  @@unique([capability])
+  @@map("capability_stats")
+}
+
+/// Prompts table for storing AI prompt templates
+/// Used by prompt loader and AI services
+model Prompt {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name       String   @unique // prompt identifier
+  content    String   // prompt template content
+  variables  String[] // array of variable names used in template
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  @@map("prompts")
+}
