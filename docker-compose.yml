@@ -13,7 +13,7 @@ services:
     ports:
       - "9991:9991"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9991/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:9991/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
