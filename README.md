@@ -4,6 +4,11 @@ Docker configuration for running CoachArtie's microservices architecture. This s
 - Capabilities Service (AI/ML processing)
 - Discord Bot Service (user interface)
 
+## 📋 Essential Documentation
+
+- **[🗄️ Database Schema](./database/README.md)** - Complete database documentation, table structures, and usage patterns
+- **[🔧 API Documentation](http://localhost:9991/openapi.yaml)** - OpenAPI spec with endpoint examples (when running)
+
 ## Quick Start
 
 1. Clone the repository with submodules
@@ -56,6 +61,16 @@ curl -X POST http://localhost:9991/api/task/execute \
     "action": "compute",
     "params": {"expression": "123 + 456"}, 
     "respondTo": {"channelId": "test-channel"}
+  }'
+
+# Test Wolfram Alpha (external API - should queue)
+curl -X POST http://localhost:9991/api/task/execute \
+  -H "Content-Type: application/json" \
+  -d '{
+    "capability": "wolfram_alpha", 
+    "action": "compute",
+    "params": {"query": "integrate x^2 sin(x) dx"}, 
+    "respondTo": {"channelId": "test-wolfram"}
   }'
 ```
 
