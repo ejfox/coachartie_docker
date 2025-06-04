@@ -1,9 +1,9 @@
 [submodule "coachartie_capabilities"]
 	path = coachartie_capabilities
-	url = https://github.com/room302studio/coachartie_capabilities.git
+	url = git@github.com:room302studio/coachartie_capabilities.git
 [submodule "coachartie_discord"]
 	path = coachartie_discord
-	url = https://github.com/ejfox/coachartie_discord2.git
+	url = git@github.com:ejfox/coachartie_discord2.git
 [submodule "coachartie_sms"]
 	path = coachartie_sms
-	url = https://github.com/ejfox/coachartie_sms
+	url = git@github.com:ejfox/coachartie_sms.git
