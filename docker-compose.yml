@@ -13,7 +13,7 @@ services:
     ports:
       - "9991:9991"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9991/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:9991/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -35,3 +35,26 @@ services:
     depends_on:
       capabilities:
         condition: service_healthy
+
+  brain:
+    build:
+      context: ./coachartie_brain
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - NITRO_PORT=3000
+      - NITRO_HOST=0.0.0.0
+    ports:
+      - "9992:3000"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
