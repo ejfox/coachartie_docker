@@ -19,7 +19,13 @@ for service in "${services[@]}"; do
   name=$(echo $service | cut -d: -f1)
   port=$(echo $service | cut -d: -f2)
   
-  if curl -sf "http://localhost:$port/health" > /dev/null 2>&1; then
+  # Use /api/health for capabilities, /health for others
+  health_path="/health"
+  if [ "$name" = "Capabilities" ]; then
+    health_path="/api/health"
+  fi
+  
+  if curl -sf "http://localhost:$port$health_path" > /dev/null 2>&1; then
     echo "✅ $name (port $port) - healthy"
   else
     echo "❌ $name (port $port) - unhealthy"

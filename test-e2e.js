@@ -11,8 +11,6 @@ import fetch from 'node-fetch';
 
 const SERVICES = {
   capabilities: 'http://localhost:9991',
-  brain: 'http://localhost:9992', 
-  sms: 'http://localhost:9993',
   email: 'http://localhost:9994'
 };
 
@@ -32,7 +30,9 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 async function testHealth(name, url) {
   try {
-    const response = await fetch(`${url}/health`, { timeout: 5000 });
+    // Use /api/health for capabilities, /health for others
+    const healthPath = name === 'capabilities' ? '/api/health' : '/health';
+    const response = await fetch(`${url}${healthPath}`, { timeout: 5000 });
     if (response.ok) {
       log(COLORS.green, '✓', `${name} health check passed`);
       return true;
