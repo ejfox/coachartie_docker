@@ -36,6 +36,56 @@ services:
       capabilities:
         condition: service_healthy
 
+  sms:
+    build:
+      context: ./coachartie_sms
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - PORT=3000
+    ports:
+      - "9993:3000"
+    depends_on:
+      capabilities:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  email:
+    build:
+      context: ./coachartie_email
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - PORT=3000
+    ports:
+      - "9994:3000"
+    depends_on:
+      capabilities:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   brain:
     build:
       context: ./coachartie_brain
