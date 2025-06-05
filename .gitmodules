@@ -7,3 +7,9 @@
 [submodule "coachartie_sms"]
 	path = coachartie_sms
 	url = git@github.com:ejfox/coachartie_sms.git
+[submodule "coachartie_brain"]
+	path = coachartie_brain
+	url = https://github.com/room302studio/coachartie_brain.git
+[submodule "coachartie_email"]
+	path = coachartie_email
+	url = https://github.com/room302studio/coachartie_email.git

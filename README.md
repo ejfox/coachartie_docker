@@ -29,6 +29,32 @@ Docker configuration for running CoachArtie's microservices architecture. This s
 - Voice channel integration
 - Depends on Capabilities Service
 
+## Testing
+
+### E2E Integration Tests
+Lightweight tests that verify service communication:
+
+```bash
+# Install test dependencies
+npm install
+
+# Quick health check (bash script)
+./test-quick.sh
+
+# Full E2E tests (requires services running)
+npm test
+
+# Start services and test in one command
+npm run docker:test
+```
+
+### Test Coverage
+- ✅ Health checks for all services
+- ✅ Capabilities service API endpoints
+- ✅ Calculate capability execution
+- ✅ Chat endpoint with memory
+- ✅ Service interdependency validation
+
 ## Development
 
 The services can be managed individually or together using docker-compose commands. Logs can be viewed for all services or filtered by service name.

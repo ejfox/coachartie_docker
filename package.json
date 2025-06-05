@@ -1,0 +1,21 @@
+{
+  "name": "coachartie-docker",
+  "version": "1.0.0",
+  "description": "Docker configuration and E2E tests for CoachArtie microservices",
+  "type": "module",
+  "scripts": {
+    "test": "node test-e2e.js",
+    "test:wait": "sleep 30 && npm test",
+    "docker:up": "docker-compose up --build -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:test": "npm run docker:up && npm run test:wait",
+    "health": "curl -f http://localhost:9991/health && echo"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "keywords": ["docker", "microservices", "testing", "e2e"],
+  "author": "EJ Fox",
+  "license": "MIT"
+}
