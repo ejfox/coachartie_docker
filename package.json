@@ -1,21 +1,26 @@
 {
   "name": "coachartie-docker",
-  "version": "1.0.0",
-  "description": "Docker configuration and E2E tests for CoachArtie microservices",
-  "type": "module",
+  "version": "1.0.0", 
+  "description": "Docker deployment for Coach Artie services",
   "scripts": {
-    "test": "node test-e2e.js",
-    "test:wait": "sleep 30 && npm test",
-    "docker:up": "docker-compose up --build -d",
-    "docker:down": "docker-compose down",
-    "docker:logs": "docker-compose logs -f",
-    "docker:test": "npm run docker:up && npm run test:wait",
-    "health": "curl -f http://localhost:9991/health && echo"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "validate": "npm test",
+    "update-submodules": "./update_submodules.sh",
+    "build": "docker-compose build",
+    "up": "docker-compose up -d",
+    "down": "docker-compose down",
+    "logs": "docker-compose logs -f"
   },
-  "dependencies": {
-    "node-fetch": "^3.3.2"
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "jest": "^29.7.0"
   },
-  "keywords": ["docker", "microservices", "testing", "e2e"],
-  "author": "EJ Fox",
-  "license": "MIT"
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": ["**/tests/**/*.test.js"],
+    "collectCoverageFrom": [
+      "tests/**/*.js"
+    ]
+  }
 }
